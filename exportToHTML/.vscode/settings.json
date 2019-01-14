@@ -1,11 +1,34 @@
-{
-    "terminal.integrated.env.osx": {
-        "SFDX_SET_CLIENT_IDS": "sfdx-vscode"
-    },
-    "terminal.integrated.env.linux": {
-        "SFDX_SET_CLIENT_IDS": "sfdx-vscode"
-    },
-    "terminal.integrated.env.windows": {
-        "SFDX_SET_CLIENT_IDS": "sfdx-vscode"
-    }
-}
+@@ -1,3 +1,6 @@
+###  0.9.4 (2018-08-03)
+* [ # 70 ] (https://github.com/formulahendry/vode-code-runner/issues/70): Gebruik `-u` vlag voor Python om stdin, stdout en stderr te dwingen om volledig ongebufferd te zijn.
+ ###  0.9.3 (2018-03-19)
+* [ # 273 ] (https://github.com/formulahendry/vode-code-runner/issues/273): Kon bestand zonder extensie niet uitvoeren
+  
+6  package.json
+@@ -2,14 +2,14 @@
+  " naam " : " code-runner " ,
+  " displayName " : " Code Runner " ,
+  " description " : " Run C, C ++, Java, JS, PHP, Python, Perl, Ruby, Go, Lua, Groovy, PowerShell, CMD, BASH, F #, C #, VBScript, TypeScript, CoffeeScript, Scala, Swift, Julia, Crystal, OCaml, R, AppleScript, Elixir, VB.NET, Clojure, Haxe, Objective-C, Rust, Racket, AutoHotkey, AutoIt, Kotlin, Dart, Pascal, Haskell, Nim, D " ,
+  " versie " : " 0.9. 3 " ,
+  " versie " : " 0.9. 4 " ,
+  " publisher " : " formulahendry " ,
+  " icon " : " images / logo.png " ,
+  " engines " : {
+    " vscode " : " ^ 1.17.0 "
+  },
+  " categorieën " : [
+    " Talen " ,
+    " Programming Languages " ,
+    " Overig "
+  ],
+  " trefwoorden " : [
+@@ -117,7 +117,7 @@
+            " cpp " : " cd $ dir && g ++ $ fileName -o $ fileNameWithoutExt && $ dir $ fileNameWithoutExt " ,
+            " cpp " : " cd $ dir && g ++ $ fileName -o $ fileNameWithoutExt && $ dir $ fileNameWithoutExt " ,
+            " objective-c " : " cd $ dir && gcc -framework Cocoa $ fileName -o $ fileNameWithoutExt && $ dir $ fileNameWithoutExt " ,
+            " php " : " php " ,
+            " python " : " python " ,
+            " python " : " python -u " ,
+            " perl " : " perl " ,
+            " perl6 " : " perl6 " ,
+            " robijn " : " robijn " ,

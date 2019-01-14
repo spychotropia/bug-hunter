@@ -1,0 +1,901 @@
+// From 2.12.0 onward
+moment.updateLocale('en', {
+    relativeTime : Object
+});
+// From 2.8.1 to 2.11.2
+moment.locale('en', {
+    relativeTime : Object
+});
+
+// Deprecated in 2.8.1
+moment.lang('en', {
+    relativeTime : Object
+});
+Locale#relativeTimemoet een object zijn van de vervangende tekenreeksen voor moment#from.
+
+moment.updateLocale('en', {
+    relativeTime : {
+        future: "in %s",
+        past:   "%s ago",
+        s  : 'a few seconds',
+        ss : '%d seconds',
+        m:  "a minute",
+        mm: "%d minutes",
+        h:  "an hour",
+        hh: "%d hours",
+        d:  "a day",
+        dd: "%d days",
+        M:  "a month",
+        MM: "%d months",
+        y:  "a year",
+        yy: "%d years"
+    }
+});
+Locale#relativeTime.futureverwijst naar het voorvoegsel / achtervoegsel voor toekomstige datums en Locale#relativeTime.pastverwijst naar het voorvoegsel / achtervoegsel voor eerdere datums. Voor alle andere verwijst een enkel teken naar het enkelvoud, en een dubbel teken verwijst naar het meervoud.
+
+Als een landinstelling extra verwerking voor een token vereist, kan deze de token instellen als een functie met de volgende handtekening. De functie zou een string moeten retourneren.
+
+function (number, withoutSuffix, key, isFuture) {
+    return string;
+}
+Het keyargument verwijst naar de vervangingssleutel in het Locale#relativeTimeobject. (bijvoorbeeld s m mm h, etc.)
+
+Het numberargument verwijst naar het aantal eenheden voor die sleutel. Het maantal is bijvoorbeeld het aantal minuten, enzovoort.
+
+Het withoutSuffixargument is waar als het token zonder achtervoegsel wordt weergegeven en onwaar als het met een achtervoegsel wordt weergegeven. (De reden voor de omgekeerde logica is dat het standaardgedrag wordt weergegeven met het achtervoegsel.)
+
+Het isFutureargument zal waar zijn als het het toekomstige achtervoegsel / prefix gaat gebruiken en false als het het vorige voorvoegsel / achtervoegsel gaat gebruiken. Het isFutureargument is toegevoegd in versie 1.6.0 .
+
+AM / PM 1.6.0+
+Bewerk
+// From 2.12.0 onward
+moment.updateLocale('en', {
+    meridiem : Function
+});
+// From 2.8.1 to 2.11.2
+moment.locale('en', {
+    meridiem : Function
+});
+
+// Deprecated in 2.8.1
+moment.lang('en', {
+    meridiem : Function
+});
+Als uw locale 'am / pm' gebruikt, Locale#meridiemkan deze worden weggelaten, omdat deze waarden de standaardwaarden zijn.
+
+Als uw landinstelling een andere berekening voor am / pm nodig heeft, Locale#meridiemmoet dit een callback-functie zijn die de juiste reeks retourneert op basis van uur, minuut en hoofdletters / kleine letters.
+
+moment.updateLocale('zh-cn', {
+    meridiem : function (hour, minute, isLowercase) {
+        if (hour < 9) {
+            return "早上";
+        } else if (hour < 11 && minute < 30) {
+            return "上午";
+        } else if (hour < 13 && minute < 30) {
+            return "中午";
+        } else if (hour < 18) {
+            return "下午";
+        } else {
+            return "晚上";
+        }
+    }
+});
+Vóór versie 1.6.0 , Locale#meridiemwas een kaart van hoofdletters en kleine versies van am / pm.
+
+moment.updateLocale('en', {
+    meridiem : {
+        am : 'am',
+        AM : 'AM',
+        pm : 'pm',
+        PM : 'PM'
+    }
+});
+Dit is verouderd. De syntaxis van de callback-functie 1.6.0 wordt nu gebruikt.
+
+AM / PM parseren 2.1.0+
+Bewerk
+// From 2.12.0 onward
+moment.updateLocale('en', {
+    meridiemParse : RegExp
+    isPM : Function
+});
+
+// From 2.8.1 to 2.11.2
+moment.locale('en', {
+    meridiemParse : RegExp
+    isPM : Function
+});
+
+// Deprecated in 2.8.1
+moment.lang('en', {
+    meridiemParse : RegExp
+    isPM : Function
+});
+Locale#isPMzou true terug moeten geven als de invoertekenreeks na 12.00 uur is. Dit wordt gebruikt bij het parseren van de a Atokens.
+
+moment.updateLocale('en', {
+    isPM : function (input) {
+        return ((input + '').toLowerCase()[0] === 'p');
+    }
+});
+Als u wilt configureren welke tekenreeksen als invoer moeten worden geparseerd, stelt u de meridiemParseeigenschap in.
+
+moment.updateLocale('en', {
+    meridiemParse : /[ap]\.?m?\.?/i
+});
+Kalender 1.3.0+
+Bewerk
+// From 2.12.0 onward
+moment.updateLocale('en', {
+    calendar : Object
+});
+// From 2.8.1 to 2.11.2
+moment.locale('en', {
+    calendar : Object
+});
+
+// Deprecated in 2.8.1
+moment.lang('en', {
+    calendar : Object
+});
+Locale#calendar zou de volgende opmaakstrings moeten hebben.
+
+moment.locale('en', {
+    calendar : {
+        lastDay : '[Yesterday at] LT',
+        sameDay : '[Today at] LT',
+        nextDay : '[Tomorrow at] LT',
+        lastWeek : '[last] dddd [at] LT',
+        nextWeek : 'dddd [at] LT',
+        sameElse : 'L'
+    }
+});
+Elk van de Locale#calendartoetsen kan ook een callback-functie zijn met de reikwijdte van het huidige moment en het eerste argument een moment dat nu wordt weergegeven. Er moet een opmaakstring worden geretourneerd.
+
+function callback (now) {
+    return '[hoy a la' + ((this.hours() !== 1) ? 's' : '') + '] LT';
+}
+Kalenderindeling 2.14.0+
+Bewerk
+moment.calendarFormat = Function
+Hiermee kunt u de tokens wijzigen die worden gebruikt door de kalender .
+
+moment.calendarFormat = function (myMoment, now) {
+    var diff = myMoment.diff(now, 'days', true);
+    var nextMonth = now.clone().add(1, 'month');
+
+    var retVal =  diff < -6 ? 'sameElse' :
+        diff < -1 ? 'lastWeek' :
+        diff < 0 ? 'lastDay' :
+        diff < 1 ? 'sameDay' :
+        diff < 2 ? 'nextDay' :
+        diff < 7 ? 'nextWeek' :
+        // introduce thisMonth and nextMonth
+        (myMoment.month() === now.month() && myMoment.year() === now.year()) ? 'thisMonth' :
+        (nextMonth.month() === myMoment.month() && nextMonth.year() === myMoment.year()) ? 'nextMonth' : 'sameElse';
+    return retVal;
+};
+Rangtelwoord 1.0.0+
+Bewerk
+// From 2.12.0 onward
+moment.updateLocale('en', {
+    ordinal : Function
+});
+// From 2.8.1 to 2.11.2
+moment.locale('en', {
+    ordinal : Function
+});
+
+// Deprecated in 2.8.1
+moment.lang('en', {
+    ordinal : Function
+});
+Locale#ordinal zou een functie moeten zijn die het ordinale voor een gegeven getal retourneert.
+
+moment.updateLocale('en', {
+    ordinal : function (number, token) {
+        var b = number % 10;
+        var output = (~~ (number % 100 / 10) === 1) ? 'th' :
+            (b === 1) ? 'st' :
+            (b === 2) ? 'nd' :
+            (b === 3) ? 'rd' : 'th';
+        return number + output;
+    }
+});
+Vanaf 2.0.0 moet de ordinale functie zowel het nummer als het rangtelwoord retourneren. Eerder was alleen het ordinale teruggestuurd.
+
+Vanaf 2.1.0 is de token-parameter toegevoegd. Het is een tekenreeks van het token dat wordt geordend, bijvoorbeeld: Mof d.
+
+Zie Wikipedia voor meer informatie over rangtelwoorden .
+
+Relatieve tijddrempels 2.7.0+
+Bewerk
+moment.relativeTimeThreshold(unit);  // getter
+moment.relativeTimeThreshold(unit, limit);  // setter
+duration.humanizeheeft drempels die bepalen wanneer een eenheid wordt beschouwd als een minuut, een uur enzovoort. Standaard wordt standaard meer dan 45 seconden als een minuut beschouwd, meer dan 22 uur als een dag enzovoort. Om te veranderen die cutoffs gebruiken moment.relativeTimeThreshold(unit, limit), waar eenheid is één van ss, s, m, h, d, M.
+
+eenheid	betekenis	gebruik
+ss	een paar seconden	minste aantal seconden dat als seconden moet worden beschouwd. Moet worden ingesteld na het instellen van het sapparaat of zonder het sapparaat in te stellen.
+s	seconden	minste aantal seconden dat als een minuut moet worden beschouwd.
+m	notulen	minste aantal minuten dat als een uur moet worden beschouwd.
+h	uur	minste aantal uren dat als een dag moet worden beschouwd.
+d	dagen	minste aantal dagen dat als een maand moet worden beschouwd.
+M	maanden	minste aantal maanden dat een jaar moet worden overwogen.
+  // Retrieve existing thresholds
+  moment.relativeTimeThreshold('ss'); // 44
+  moment.relativeTimeThreshold('s');  // 45
+  moment.relativeTimeThreshold('m');  // 45
+  moment.relativeTimeThreshold('h');  // 22
+  moment.relativeTimeThreshold('d');  // 26
+  moment.relativeTimeThreshold('M');  // 11
+
+  // Set new thresholds
+  moment.relativeTimeThreshold('ss', 3);
+  moment.relativeTimeThreshold('s', 40);
+  moment.relativeTimeThreshold('m', 40);
+  moment.relativeTimeThreshold('h', 20);
+  moment.relativeTimeThreshold('d', 25);
+  moment.relativeTimeThreshold('M', 10);
+Opmerking: het ophalen van drempels is toegevoegd in 2.8.1 .
+
+Opmerking: het ophalen en instellen van de ssdrempelwaarde is toegevoegd in 2.18.0 .
+
+Relatieve tijdafronding 2.14.0+
+Bewerk
+moment.relativeTimeRounding();  // getter
+moment.relativeTimeRounding(fn);  // setter
+duration.humanizerondt een mogelijke dubbele waarde af voordat deze wordt geleverd aan de reeks relativeTime-indeling die is opgegeven in de landinstelling. Om de afronding te regelen die u kunt gebruiken moment.relativeTimeRounding.
+
+var roundingDefault = moment.relativeTimeRounding();
+
+// Round relative time evaluation down
+moment.relativeTimeRounding(Math.floor);
+
+moment.relativeTimeThreshold('s', 60);
+moment.relativeTimeThreshold('m', 60);
+moment.relativeTimeThreshold('h', 24);
+moment.relativeTimeThreshold('d', 31);
+moment.relativeTimeThreshold('M', 12);
+
+var a = moment();
+a.subtract({hours: 23, minutes: 59, seconds: 59});
+a.toNow()  // == 'in 23 hours'  'Round down towards the nearest hour'
+
+// back to default
+moment.relativeTimeRounding(roundingDefault);
+Je kunt er zelfs voor kiezen om helemaal geen afronding uit te voeren:
+
+var retainValue = function (value) {
+    return value;
+};
+moment.relativeTimeRounding(retainValue);
+
+var a = moment();
+a.subtract({hours: 39});
+a.toNow() // == 'in 1.625 days', 'Round down towards the nearest year'
+Veranderende tijdbron 2.11.0+
+Bewerk
+moment.now = function () { return +new Date(); }
+Als u de tijd wilt wijzigen die Moment ziet, kunt u een methode opgeven die het aantal milliseconden retourneert sinds het Unix-tijdperk (1 januari 1970).
+
+De standaard is:
+
+moment.now = function () {
+    return +new Date();
+}
+Dit wordt gebruikt tijdens het bellen moment()en de huidige datum die wordt gebruikt wanneer tokens zijn weggelaten format(). In het algemeen gebruikt elke methode die de huidige tijd nodig heeft dit onder de motorkap.
+
+Durations
+Moment.js heeft ook duurobjecten. Wanneer een moment wordt gedefinieerd als enkele punten in de tijd, worden de tijdsduren gedefinieerd als een tijdsduur.
+
+Duur heeft geen gedefinieerde begin- en einddatum. Ze zijn contextloos.
+
+Een duur is conceptueel meer gelijk aan '2 uur' dan aan 'Vandaag tussen 14 en 16 uur'. Als zodanig zijn ze geen goede oplossing voor het converteren tussen eenheden die afhankelijk zijn van de context.
+
+Een jaar kan bijvoorbeeld worden gedefinieerd als 366 dagen, 365 dagen, 365,25 dagen, 12 maanden of 52 weken. Het proberen jaren om te zetten in dagen heeft geen zin zonder context. Het is veel beter om te gebruiken moment#diffvoor het berekenen van dagen of jaren tussen twee momenten dan om te gebruiken Durations.
+
+Het creëren van 1.6.0+
+Bewerk
+moment.duration(Number, String);
+moment.duration(Number);
+moment.duration(Object);
+moment.duration(String);
+Als u een duur wilt maken, belt u moment.duration()met de tijdsduur in milliseconden.
+
+moment.duration(100); // 100 milliseconds
+Als u een moment wilt maken met een andere meeteenheid dan milliseconden, kunt u de maateenheid ook passeren.
+
+moment.duration(2, 'seconds');
+moment.duration(2, 'minutes');
+moment.duration(2, 'hours');
+moment.duration(2, 'days');
+moment.duration(2, 'weeks');
+moment.duration(2, 'months');
+moment.duration(2, 'years');
+Dezelfde afkorting voor moment#adden moment#subtractwerkt hier ook.
+
+Sleutel	steno
+jaar	Y
+maanden	M
+weken	w
+dagen	d
+uur	h
+notulen	m
+seconden	s
+milliseconden	Mevrouw
+Heel erg zoals moment#add, kunt u een voorwerp van waarden overgaan als u veelvoudige verschillende eenheden van meting nodig hebt.
+
+moment.duration({
+    seconds: 2,
+    minutes: 2,
+    hours: 2,
+    days: 2,
+    weeks: 2,
+    months: 2,
+    years: 2
+});
+Vanaf 2.1.0 ondersteunt moment het parseren van ASP.NET-stijltijdspannes. De volgende indelingen worden ondersteund.
+
+Het formaat is een uur, minuut, tweede tekenreeks gescheiden door dubbele punten zoals 23:59:59. Het aantal dagen kan worden voorafgegaan door een puntscheider zoals zo 7.23:59:59. Gedeeltelijke seconden worden ook ondersteund 23:59:59.999.
+
+moment.duration('23:59:59');
+moment.duration('23:59:59.999');
+moment.duration('7.23:59:59.999');
+moment.duration('23:59'); // added in 2.3.0
+Vanaf 2.3.0 ondersteunt moment ook het ontleden van ISO 8601- duur.
+
+moment.duration('P1Y2M3DT4H5M6S');
+moment.duration('P1M');
+Vanaf 2.11.0 worden strings met duurformaten met een spatie tussen dagen en rust ondersteund.
+
+moment.duration('7 23:59:59.999');
+Vanaf 2.13.0 worden gemengde negatieve en positieve tekens ondersteund bij het analyseren van de duur.
+
+moment.duration('PT-6H3M')
+Vanaf 2.18.0 worden ongeldige tijdsduren ondersteund, net als ongeldige momenten. Als u een ongeldige duur wilt maken, kunt u doorgaan NaNvoor een waarde van een eenheid.
+
+Verwacht in toekomstige releases ongeldige duur om meer cases te behandelen (zoals null-waarden voor eenheden).
+
+moment.duration(NaN);
+moment.duration(NaN, 'days');
+moment.duration.invalid();
+Kloon 2.19.0+
+Bewerk
+moment.duration().clone();
+Maak een kloon van een duur. Duraties kunnen worden gewijzigd, net als momentobjecten, dus hiermee kun je op een bepaald moment een momentopname krijgen.
+
+var d1 = moment.duration();
+var d2 = d1.clone();
+d1.add(1, 'second');
+d1.asMilliseconds() !== d2.asMilliseconds();
+humaniseren 1.6.0+
+Bewerk
+moment.duration().humanize();
+Soms wil je al het goede van moment#frommaar je wilt geen twee momenten hoeven te maken, je wilt gewoon een lange tijd weergeven.
+
+Enter moment.duration().humanize().
+
+moment.duration(1, "minutes").humanize(); // a minute
+moment.duration(2, "minutes").humanize(); // 2 minutes
+moment.duration(24, "hours").humanize();  // a day
+Standaard is de retourstring zonder suffix. Als je een achtervoegsel wilt, pas dan in waar, zoals hieronder te zien is.
+
+moment.duration(1, "minutes").humanize(true); // in a minute
+Voor suffixen voor nu, geef een negatief getal door.
+
+moment.duration(-1, "minutes").humanize(true); // a minute ago
+Ongeldige duur wordt gehumaniseerd naar de gelokaliseerde versie van Invalid Date.
+
+moment.duration.invalid().humanize(); // Invalid Date
+Milliseconds 1.6.0+
+Bewerk
+moment.duration().milliseconds();
+moment.duration().asMilliseconds();
+Gebruik om het aantal milliseconden in een duur te krijgen moment.duration().milliseconds() .
+
+Er wordt een getal tussen 0 en 999 geretourneerd.
+
+moment.duration(500).milliseconds(); // 500
+moment.duration(1500).milliseconds(); // 500
+moment.duration(15000).milliseconds(); // 0
+Als u de lengte van de duur in milliseconden wilt, gebruikt u in moment.duration().asMilliseconds()plaats daarvan.
+
+moment.duration(500).asMilliseconds(); // 500
+moment.duration(1500).asMilliseconds(); // 1500
+moment.duration(15000).asMilliseconds(); // 15000
+Seconden 1.6.0+
+Bewerk
+moment.duration().seconds();
+moment.duration().asSeconds();
+Gebruik om het aantal seconden in een duur te krijgen moment.duration().seconds() .
+
+Er wordt een getal tussen 0 en 59 geretourneerd.
+
+moment.duration(500).seconds(); // 0
+moment.duration(1500).seconds(); // 1
+moment.duration(15000).seconds(); // 15
+Als u de lengte van de duur in seconden wilt, gebruikt u in moment.duration().asSeconds()plaats daarvan.
+
+moment.duration(500).asSeconds(); // 0.5
+moment.duration(1500).asSeconds(); // 1.5
+moment.duration(15000).asSeconds(); // 15
+Minuten 1.6.0+
+Bewerk
+moment.duration().minutes();
+moment.duration().asMinutes();
+Zoals bij de andere getters voor duur, moment.duration().minutes()krijgt de minuten (0 - 59).
+
+moment.duration().asMinutes() krijgt de lengte van de duur in minuten.
+
+Uren 1.6.0+
+Bewerk
+moment.duration().hours();
+moment.duration().asHours();
+Net als bij de andere getters voor de duur, moment.duration().hours()krijgt u de uren (0 - 23).
+
+moment.duration().asHours() krijgt de lengte van de duur in uren.
+
+Dagen 1.6.0+
+Bewerk
+moment.duration().days();
+moment.duration().asDays();
+Zoals met de andere getters voor duur, moment.duration().days()krijgt de dagen (0 - 30).
+
+moment.duration().asDays() krijgt de lengte van de duur in dagen.
+
+Weken 1.6.0+
+Bewerk
+moment.duration().weeks();
+moment.duration().asWeeks();
+Zoals met de andere getters voor duur, moment.duration().weeks()krijgt de weken (0 - 4).
+
+moment.duration().asWeeks() krijgt de lengte van de duur in weken.
+
+Let erop dat, in tegenstelling tot de andere getters, de weken worden geteld als een subset van de dagen en niet van het aantal dagen worden afgehaald.
+
+Opmerking: de lengte van een duur in weken wordt gedefinieerd als 7 dagen.
+
+Maanden 1.6.0+
+Bewerk
+moment.duration().months();
+moment.duration().asMonths();
+Net als bij de andere getters voor de duur, moment.duration().months()krijgt de maanden (0 - 11).
+
+moment.duration().asMonths() krijgt de lengte van de duur in maanden.
+
+Jaar 1.6.0+
+Bewerk
+moment.duration().years();
+moment.duration().asYears();
+Zoals met de andere getters voor de duur, moment.duration().years() krijgt de jaren.
+
+moment.duration().asYears() krijgt de lengte van de duur in jaren.
+
+Voeg tijd 2.1.0+ toe
+Bewerk
+moment.duration().add(Number, String);
+moment.duration().add(Number);
+moment.duration().add(Duration);
+moment.duration().add(Object);
+Verandert de oorspronkelijke duur door tijd toe te voegen.
+
+Dezelfde toetsen en korte letters die worden gebruikt om duur te maken, kunnen hier worden gebruikt als het tweede argument.
+
+var a = moment.duration(1, 'd');
+var b = moment.duration(2, 'd');
+a.add(b).days(); // 3
+Houd er rekening mee dat het toevoegen van een ongeldige duur aan een andere duur resulteert in een ongeldige duur.
+
+Trek 2.1.0+ af
+Bewerk
+moment.duration().subtract(Number, String);
+moment.duration().subtract(Number);
+moment.duration().subtract(Duration);
+moment.duration().subtract(Object);
+Muteert de oorspronkelijke duur door de tijd af te trekken.
+
+Dezelfde toetsen en korte letters die worden gebruikt om duur te maken, kunnen hier worden gebruikt als het tweede argument.
+
+var a = moment.duration(3, 'd');
+var b = moment.duration(2, 'd');
+a.subtract(b).days(); // 1
+Houd er rekening mee dat het toevoegen van een ongeldige duur aan een andere duur resulteert in een ongeldige duur.
+
+Duur gebruiken met Diff 2.1.0+
+Bewerk
+var duration = moment.duration(x.diff(y))
+Je kunt ook de duur moment#diffgebruiken om de duur tussen twee momenten te krijgen. Om dit te doen, geeft u de moment#diffmethode gewoon door moment#durationals volgt:
+
+  var x = new moment()
+  var y = new moment()
+  var duration = moment.duration(x.diff(y))
+  // returns duration object with the duration between x and y
+Kijk hier voor meer informatie over moment#diff.
+
+Als eenheid van tijd 2.1.0+
+Bewerk
+moment.duration().as(String);
+Als een alternatief voor Duration#asX, kunt u gebruiken Duration#as('x'). Alle steno-toetsen moment#add zijn hier ook van toepassing.
+
+duration.as('hours');
+duration.as('minutes');
+duration.as('seconds');
+duration.as('milliseconds');
+Ongeldige duur retour NaNvoor alle eenheden.
+
+Krijg Unit of Time 2.1.0+
+Bewerk
+moment.duration().get(String);
+Als alternatief voor Duration#x()getters kunt u gebruiken Duration#get('x'). Alle steno-toetsen moment#add zijn hier ook van toepassing.
+
+duration.get('hours');
+duration.get('minutes');
+duration.get('seconds');
+duration.get('milliseconds');
+Ongeldige duur retour NaNvoor alle eenheden.
+
+Als JSON 2.9.0+
+Bewerk
+moment.duration().toJSON();
+Bij het serialiseren van een durationobject naar JSON, wordt dit weergegeven als een ISO8601-tekenreeks.
+
+JSON.stringify({
+    postDuration : moment.duration(5, 'm')
+}); // '{"postDuration":"PT5M"}'
+Ongeldige duur retourneert Invalid Dateals json-weergave.
+
+Is een duur van 1.6.0+
+Bewerk
+moment.isDuration(obj);
+Gebruik om te controleren of een variabele een moment-duurobject is moment.isDuration().
+
+moment.isDuration() // false
+moment.isDuration(new Date()) // false
+moment.isDuration(moment()) // false
+moment.isDuration(moment.duration()) // true
+moment.isDuration(moment.duration(2, 'minutes')) // true
+Als ISO 8601- reeks 2.8.0+
+Bewerk
+moment.duration().toISOString();
+Retourneert de duur in reeks zoals gespecificeerd door de ISO 8601-standaard .
+
+moment.duration(1, 'd').toISOString() // "P1D"
+Formaatbeschrijving PnYnMnDTnHnMnS:
+
+Eenheid	Betekenis
+P	P staat voor periode. Geplaatst aan het begin van de duurweergave.
+Y	Jaar
+M	Maand
+D	Dag
+T	Ontwerper die voorafgaat aan de tijdcomponenten.
+H	Uur
+M	Minuut
+S	Tweede
+Locale 2.17.1+
+Bewerk
+moment.duration().locale();
+moment.duration().locale(String);
+U kunt de locale van een duur gebruiken of instellen met locale(...). De locale beïnvloedt de duur van de string-methoden, zoals humanize(). Zie de intl- sectie voor meer informatie over internationalisering in het algemeen.
+
+moment.duration(1, "minutes").locale("en").humanize(); // a minute
+moment.duration(1, "minutes").locale("fr").humanize(); // une minute
+moment.duration(1, "minutes").locale("es").humanize(); // un minuto
+De achtervoegsels humanize()zijn ook geïnternationaliseerd:
+
+moment.duration(1, "minutes").locale("en").humanize(true); // in a minute
+moment.duration(1, "minutes").locale("fr").humanize(true); // dans une minute
+moment.duration(1, "minutes").locale("es").humanize(true); // en un minuto
+
+moment.duration(-1, "minutes").locale("en").humanize(true); // a minute ago
+moment.duration(-1, "minutes").locale("fr").humanize(true); // il y a une minute
+moment.duration(-1, "minutes").locale("es").humanize(true); // hace un minuto
+nutsbedrijven
+Moment onthult een aantal methoden die nuttig kunnen zijn voor mensen die de bibliotheek uitbreiden of aangepaste parsers schrijven.
+
+Normaliseer eenheden 2.3.0+
+Bewerk
+moment.normalizeUnits(String);
+Met veel van de functies van Moment kan de beller in aliassen passeren voor eenheidsenums. Alle getonderstaande s zijn bijvoorbeeld equivalent.
+
+var m = moment();
+m.get('y');
+m.get('year');
+m.get('years');
+Als u de bibliotheek verlengt, wilt u mogelijk toegang tot de faciliteiten van Moment om uw functionaliteit beter af te stemmen op die van Moment.
+
+moment.normalizeUnits('y');      // 'year'
+moment.normalizeUnits('Y');      // 'year'
+moment.normalizeUnits('year');   // 'year'
+moment.normalizeUnits('years');  // 'year'
+moment.normalizeUnits('YeARS');  // 'year'
+Ongeldige 2.3.0+
+Bewerk
+moment.invalid(Object);
+U kunt uw eigen ongeldige momentobjecten maken, wat handig is bij het maken van uw eigen parser.
+
+var m = moment.invalid();
+m.isValid();                      // false
+m.format();                       // 'Invalid date'
+m.parsingFlags().userInvalidated; // true
+invalidaccepteert ook een object dat aangeeft welke parseringsvlaggen moeten worden ingesteld. Hierdoor wordt de parseringsvlag alleen ingesteld userInvalidatedals dit een van de opgegeven eigenschappen is.
+
+var m = moment.invalid({invalidMonth: 'Actober'});
+m.parsingFlags().invalidMonth; // 'Actober'
+U hoeft geen parsing-vlaggen op te geven die door Moment worden herkend; het moment zal toch ongeldig zijn en de parseringsvlaggen worden geretourneerd door parsingFlags().
+
+plugins
+Sommige andere mensen hebben plug-ins gemaakt voor Moment.js die nuttig voor u kunnen zijn.
+
+strftime
+Bewerk
+npm install moment-strftime
+Als u comfortabeler bent met strftime in plaats van LDML-achtige parsing-tokens, kunt u de plug-in van Ben Oakes gebruiken moment-strftime .
+
+De repository bevindt zich op github.com/benjaminoakes/moment-strftime .
+
+MSDate
+Bewerk
+Als u OLE Automation-datums gebruikt in .NET, check dan Markit On Demand's moment-msdate . Met behulp van deze plug-in kunt u OA-datums in JavaScript-datums opmaken en omgekeerd.
+
+Converteer een momentnaar een OA-datum:
+
+moment().toOADate(); // a floating point number
+Of converteer een OA-datum naar een moment:
+
+moment.fromOADate(41493); // Wed Aug 07 2013 00:00:00 GMT-0600 (MDT)
+Meer informatie en gedetailleerde documenten zijn te vinden op GitHub op http://markitondemand.github.io/moment-msdate/ .
+
+Java DateFormat Parser
+Bewerk
+npm install moment-jdateformatparser
+Als je met de wilt werken java.text.DateFormat kun je deze plug-in gebruiken.
+
+Bijvoorbeeld,
+
+moment("2013-12-24 14:30").formatWithJDF("dd.MM.yyyy");  // returns the formatted date "24.12.2013"
+moment().toJDFString("DD.MM.YYYY");  // returns the Java format pattern "dd.MM.yyyy"
+De repository bevindt zich op github.com/MadMG/moment-jdateformatparser .
+
+Datumbereiken
+Bewerk
+npm install moment-range
+Als u met datumbereiken wilt werken, kunt u de plug-in van Gianni Chiappetta gebruiken moment-range.
+
+Documentatie is te vinden op de startpagina github.com/rotaready/moment-range .
+
+En het is ook beschikbaar voor internet in de repository hieronder.
+
+De repository bevindt zich op github.com/rotaready/moment-range .
+
+Twix
+Bewerk
+npm install twix
+Een andere bereikplug-in is de bibliotheek van Isaac Cambron Twix. Het heeft veel bereik-gerelateerde functies en blinkt uit in leesbare leesbare opmaakbereiken. Bijvoorbeeld,
+
+var t = moment("1/25/1982 9:30 AM").twix("1/25/1982 1:30 PM");
+t.isCurrent(); // false
+t.count('minutes'); // 241
+t.format();  // 'Jan 25, 1982, 9:30 AM - 1:30 PM'
+t.simpleFormat("h:m"); // '9:30 - 1:30'
+Volledige documentatie van alle opties en functies is hier te vinden .
+
+Het is beschikbaar op npm als volgt:
+
+npm install twix
+Of pak gewoon het JS-bestand van hier .
+
+Nauwkeurig bereik
+Bewerk
+npm install moment-precise-range-plugin
+De Precise Range- plug-in, geschreven door Rob Dawson , kan worden gebruikt om exacte, voor de mens leesbare weergaven van datum / tijd-bereiken weer te geven:
+
+moment("2014-01-01 12:00:00").preciseDiff("2015-03-04 16:05:06");
+ // 1 year 2 months 3 days 4 hours 5 minutes 6 seconds
+moment.preciseDiff("2014-01-01 12:00:00", "2014-04-20 12:00:00");
+// 3 months 19 days
+Voor het verkrijgen van de onbewerkte numerieke waarden in plaats van een tekenreeks geeft u de waarde door trueals het derde argument voor de methode:
+
+moment.preciseDiff(m1, m2, true); 
+// {years : 0, months : 1, days : 2, hours : 3, minutes : 4, seconds : 5, firstDateWasLater : false}
+ISO-kalender
+Bewerk
+npm install moment-isocalendar
+Als je op zoek bent naar een Python-achtige isocalendar-methode, kun je de plug-in van Rocky Meza gebruiken
+
+moment-isocalendar
+
+Als u de methode isocalendar even aanroept, wordt een array geretourneerd zoals de volgende:
+
+[year, week_of_year, day_of_week, minutes_since_midnight]
+
+moment().isocalendar(); // [2012, 8, 5, 870]
+U kunt ook een moment uit een isocalendar-array reconstrueren.
+
+moment.fromIsocalendar([2011, 51, 5, 870]).format('LLLL');
+// "Friday, December 23 2011 2:30 PM"
+De repository bevindt zich op github.com/fusionbox/moment-isocalendar .
+
+Jalaali kalender
+Bewerk
+npm install moment-jalaali
+Als je met het Jalaali-kalendersysteem (Jalali, Perzisch, Khorshidi of Shamsi) wilt werken, kun je de plug-in van Behrang Noruzi Niya gebruiken moment-jalaali.
+
+Na installatie wordt het momentverpakt en kan het moment Jalaali jaren en maanden formatteren en analyseren. Hier is een kort voorbeeld:
+
+var m = moment('1360/5/26', 'jYYYY/jM/jD'); // Parse a Jalaali date.
+m.format('jYYYY/jM/jD [is] YYYY/M/D'); // 1360/5/26 is 1981/8/17
+De repository bevindt zich op github.com/behrang/moment-jalaali .
+
+Hijri-kalender
+Bewerk
+npm install moment-hijri
+Als u met de Hijri-kalender wilt werken, kunt u de moment-hijriplug-in gebruiken. moment-hijriis een plug-in moment voor de Hijri maankalender gebaseerd op Umm al-Qura berekeningen. Deze plug-in is ontwikkeld door Suhail Alkowaileet .
+
+Wanneer u het installeert, wordt het ingepakt momenten kunt u Hijri-datums analyseren. Hier is een kort voorbeeld:
+
+m = moment('1410/8/28', 'iYYYY/iM/iD'); // Parse a Hijri date.
+m.format('iYYYY/iM/iD [is] YYYY/M/D'); // 1410/8/28 is 1990/3/25
+De repository bevindt zich op github.com/xsoh/moment-hijri .
+
+terugkeren
+Bewerk
+npm install moment-recur
+Als u met terugkerende datums moet werken, kunt u de invoegtoepassing van Casey Trimm gebruiken moment-recur.
+
+Met deze plug-in kunt u op de lengte gebaseerde intervallen (dagen, weken, enz.) En kalender-intervallen maken (dagenVanaf, maandenVanaf, enz.).
+
+Het biedt een matches functie om te testen of een datum terugkeert volgens de ingestelde regels, evenals generatorfuncties om de volgende en vorige datums in een reeks te krijgen.
+
+De repository, documentatie en nog veel meer voorbeelden zijn te vinden op github.com/c-trimm/moment-recur
+
+var interval = moment( "01/01/2014" ).recur().every(2).days(); // Length Interval
+interval.matches( "01/03/2014" ); // true
+interval.next( 2, "L" ); // ["01/03/2014", "01/05/2014"]
+interval.forget( "days" ); // Remove a rule
+interval.dayOfMonth( 10 ); // Calendar Interval
+interval.matches( "05/10/2014" ); // true
+interval.previous( 2, "L" ); // ["12/10/2013", "11/10/2013"]
+tjilpen
+Bewerk
+Als je probeert tijden op te stellen voor tweets zoals Twitter doet, kun je de moment.twitter- plugin van @hijonathan gebruiken .
+
+Het is een eenvoudige manier om zowel korte als lange versies van door mensen leesbare tijdstempels weer te geven.
+
+moment().subtract(5, 'hours').twitterLong();
+// 5 hours
+Ja, het doet slimme pluralisatie.
+
+moment().subtract(1, 'hour').twitterLong();
+// 1 hour
+Niet kort genoeg voor jou?
+
+moment().subtract(6, 'days').twitterShort();
+// 6d
+Fiscale kwartalen
+Bewerk
+Als je ooit behoefte hebt aan Fiscal , Calendar of Academic Quarters, kun je de moment-fquarter- plugin gebruiken door @robgallen .
+
+Op zijn eenvoudigst, bel gewoon de fquarter-methode op elk moment object. Het geeft een opgemaakte reeks als resultaat met April als eerste kwartaal.
+
+moment("2013-01-01").fquarter();
+// Q4 2012/13
+U kunt in elke maand als startkwartaal opgeven, bijvoorbeeld in juli
+
+moment("2013-01-01").fquarter(7);
+// Q3 2012/13
+Als je kalenderkwartalen wilt, begin dan in januari
+
+moment("2013-01-01").fquarter(1);
+// Q1 2013
+Parse Date Format
+Bewerk
+npm install moment-parseformat
+Deze plug-in extraheert het formaat van een datum / tijd-reeks.
+
+var format = moment.parseFormat('Thursday, February 6th, 2014 9:20pm');
+// dddd, MMMM Do, YYYY h:mma
+moment().format(format); // format
+Dat maakt het mogelijk om slimme datuminvoeringen te maken waarmee uw gebruikers een datum / tijd kunnen instellen en waarmee u de gewenste indeling van de gebruiker kunt extraheren voor toekomstig gebruik. Vind een voorbeeld van het gebruik ervan op minutes.io .
+
+De plug-in is geschreven door @ gr2m . Links: Demo | Bron
+
+Ronde
+Bewerk
+npm install moment-round
+Deze plug-in zal de datum / tijd afronden op een bepaald interval.
+
+Bijvoorbeeld,
+
+var m = new moment(); // 2015-06-18 15:30:19
+moment.round(5, 'seconds'); // 2015-06-18 15:30:20
+moment.ceil(3, 'minutes'); // 2015-06-18 15:33:00
+moment.floor(16, 'hours'); // 2015-06-18 00:00:00
+moment.ceil(21, 'hours'); // 2015-06-18 21:00:00
+moment.ceil(20, 'hours'); // 2015-06-19 00:00:00
+De repository bevindt zich op github.com/WebDevTmas/moment-round .
+
+Transformeren
+Bewerk
+bower install moment-transform
+moment-transformis een plug-in die datums door patronen manipuleert. U kunt basisbewerkingen -set / optellen / aftrekken- gebruiken voor afzonderlijke onderdelen (uren, maanden, ...) van een Moment-instantie.
+
+moment().transform('YYYY-MM-+01 00:00:00.000'); // Tonight at midnight
+moment().transform('14:30:00.000'); // Today, 2:30 pm
+moment().transform('YYYY-MM--30 00:00:00.000'); // 30 days ago
+Met optionele parameters kunt u aangepaste patronen opgeven en strikt patroongebruik afdwingen (niet-alfabetische tekens zijn standaard niet verplicht in de doorgegeven tekenreeks).
+
+moment().transform('+01MMYYYY', 'DD/MM/YYYY', false); // Tomorrow, same time
+moment().transform('+01MMYYYY', 'DD/MM/YYYY', true); // Invalid date
+U kunt zien dat het leven daar , terwijl de repository is hier .
+
+Taiwan kalender
+Bewerk
+npm install moment-taiwan
+Als je met het Taiwanese kalendersysteem wilt werken, kun je de plug-in van Bradwoo8621 gebruiken moment-taiwan.
+
+Wanneer het is geïnstalleerd, wordt het verpakt momenten kan het moment van het jaar Taiwan opmaken en analyseren. Hier is een kort voorbeeld:
+
+m = moment('104/01/01', 'tYY/MM/DD') // Parse a Taiwan date
+m.format('tYY/MM/DD [is] YYYY/M/D') // 104/01/01 is 2015/01/01
+
+m.twYear() // 104
+De repository bevindt zich op github.com/bradwoo8621/moment-taiwan .
+
+Duur formaat
+Bewerk
+npm install moment-duration-format
+Dit is een plug-in die uitgebreide opmaak van Moment Durations mogelijk maakt.
+
+Bijvoorbeeld,
+
+moment.duration(123, "minutes").format("h:mm");
+// "2:03"
+De repository bevindt zich op github.com/jsmreese/moment-duration-format .
+
+timer
+Bewerk
+npm install moment-timer
+Dit is een Moment.js-plug-in die het gebruik van timers toestaat, die veel meer controle bieden dan de native JavaScript-timers. Het is in feite een herschrijving van JavaScripts eigen setInterval en setTimeout.
+
+Bijvoorbeeld,
+
+var timer = moment.duration(5, "seconds").timer({loop: true}, function() {
+  // Callback
+});
+De repository bevindt zich op github.com/SeverinDK/moment-timer .
+
+Bedrijf
+Bewerk
+npm install moment-business
+Dit is een Moment.js-bibliotheek die Moment-bewerkingen voor westerse werkweken mogelijk maakt: 7-daagse weken waarbij zaterdag en zondag niet-werkdagen zijn.
+
+Bijvoorbeeld,
+
+import business from 'moment-business';
+
+// true if the moment is Mon-Fri, false otherwise
+business.isWeekDay(someMoment);
+
+// Adds five work days to the Moment
+business.addWeekDays(someMoment, 5);
+De repository bevindt zich op github.com/jmeas/moment-business .
+
+Korte datum formatter
+Bewerk
+Als je op korte tijden tijd wilt indelen , kun je de moment-shortformat- plug-in gebruiken door @researchgate .
+
+Het is gebaseerd op en lijkt op de moment.twitter plug-in maar heeft een andere output.
+
+moment().subtract(5, 'hours').short();
+// 5h ago
+moment().add(5, 'hours').short();
+// in 5h
+U kunt ook het gebruik van de relatieve tijd-sjablonen uitschakelen
+
+moment().subtract(1, 'hour').short(false);
+// 1h
+Als de datum te ver in de toekomst of in het verleden ligt, wordt deze zo weergegeven
+
+moment().subtract(500, 'days').short();
+// 5 Mar, 1970
+Moment.js is vrij uitke
